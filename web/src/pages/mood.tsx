@@ -18,7 +18,7 @@ export default function Mood() {
         const code = urlParams.get('code');
         console.log('Code:', code);
         if (code) {
-            axios.post('/getAuth', { code }).then((response) => {
+            axios.post('https://fiery-panda-598.convex.cloud/getAuth', { code }).then((response) => {
                 const accessToken = response.data.accessToken;
                 axios.get('https://api.spotify.com/v1/me/playlists', {
                     headers: {
