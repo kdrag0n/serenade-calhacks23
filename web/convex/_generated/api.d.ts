@@ -14,7 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as functions from "../functions";
+import type * as http from "../http";
 import type * as spotifyAuth from "../spotifyAuth";
 
 /**
@@ -26,7 +26,7 @@ import type * as spotifyAuth from "../spotifyAuth";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  functions: typeof functions;
+  http: typeof http;
   spotifyAuth: typeof spotifyAuth;
 }>;
 export declare const api: FilterApi<
