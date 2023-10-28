@@ -26,18 +26,30 @@ export default function Auth() {
                 client_secret: process.env.SPOTIFY_CLIENT_SECRET
             }).then((response: any) => {
                 const accessToken = response.data.access_token
-                axios.get('https://api.spotify.com/v1/me/tracks', {
+                axios.get('https://api.spotify.com/v1/me/playlists', {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }
                 }).then((response: any) => {
-                    console.log(response.data)
-                })
+                    const playlists = response.data.items;
+                    playlists.forEach((playlist: any) => {
+                        axios.get(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`
+                            }
+                        }).then((response: any) => {
+                            const tracks = response.data.items;
+                            tracks.forEach((track: any) => {
+                                console.log(track.track.name);
+                            });
+                        });
+                    });
+                });
             })
         }
     }, [])
 
-    return (
+        return (
         <div className="flex min-h-screen flex-col items-center justify-between p-24">
             <div className="flex flex-col md:flex-row pt-2 md:space-x-2">
                 <button onClick={handleConnectToSpotify} className="btn btn-success">
