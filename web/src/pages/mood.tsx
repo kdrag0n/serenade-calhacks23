@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { useMutation } from 'convex';
-import { api } from '../convex/_generated/api.js';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api.js';
 
 const getSpotifyToken = useMutation(api.functions.getSpotifyToken);
 
