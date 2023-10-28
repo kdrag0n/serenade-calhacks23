@@ -6,7 +6,7 @@ export default function Auth() {
         return (
         <div className="flex min-h-screen flex-col items-center justify-between p-24">
             <div className="flex flex-col md:flex-row pt-2 md:space-x-2">
-                <button onClick={loginWithRedirect} className="btn btn-success">
+                <button onClick={() => loginWithRedirect()} className="btn btn-success">
                     Connect to Spotify
                 </button>
             </div>

@@ -14,8 +14,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       domain="dev-1gdhmf8ljgbob4bk.us.auth0.com"
       clientId="yNMjcUBS0m8PrZgrDaZCNHJONBIBFdMq"
       authorizationParams={{
-        redirect_uri:
-          typeof window === "undefined" ? undefined : window.location.origin,
+        redirect_uri: "http://localhost:3000/mood"
       }}
       useRefreshTokens={true}
       cacheLocation="localstorage"
