@@ -21,7 +21,11 @@ export default function Mood() {
                 redirect_uri: REDIRECT_URI,
                 client_id: CLIENT_ID,
                 client_secret: process.env.SPOTIFY_CLIENT_SECRET
-            }).then((response: any) => {
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then((response: any) => {
                 const accessToken = response.data.access_token
                 axios.get('https://api.spotify.com/v1/me/playlists', {
                     headers: {
