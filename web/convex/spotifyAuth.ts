@@ -20,5 +20,9 @@ export const spotifyAuth = httpAction(async (ctx: any, req: any): Promise<Respon
         });
 
         const accessToken = response.data.access_token;
-        return new Response(JSON.stringify({ accessToken }));
+        return new Response(JSON.stringify({ accessToken }), {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+        });
 });
