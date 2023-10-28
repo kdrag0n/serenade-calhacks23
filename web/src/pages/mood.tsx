@@ -34,7 +34,7 @@ export default function Mood() {
                 }).then((response: any) => {
                     const playlists = response.data.items;
                     playlists.forEach((playlist: any) => {
-                        axios.get(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+                        axios.get('https://api.spotify.com/v1/me/tracks', {
                             headers: {
                                 'Authorization': `Bearer ${accessToken}`
                             }
