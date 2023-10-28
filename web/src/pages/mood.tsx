@@ -10,8 +10,8 @@ const emojiBank = '😀,😁,🥹,😅,😂,🥲,😊,🙂,😌,🥰,😋,😝,�
 
 export default function Mood() {
     const getSpotifyToken = useMutation(api.functions.getSpotifyToken);
-    const REDIRECT_URI = process.env.REDIRECT_URI;
-    const CLIENT_ID = process.env.CLIENT_ID;
+    const CLIENT_ID = "1526c36afb8b45ac8e684bb8729215b6"
+    const REDIRECT_URI = "http://localhost:3000/mood"
 
     let [mood, setMood] = useState(emojiBank.split(',')[0])
         useEffect(() => {

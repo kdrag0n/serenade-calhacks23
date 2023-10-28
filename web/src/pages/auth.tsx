@@ -2,8 +2,8 @@ import { config } from 'dotenv'
 config()
 
 export default function Auth() {
-    const REDIRECT_URI = process.env.REDIRECT_URI;
-    const CLIENT_ID = process.env.CLIENT_ID;
+    const CLIENT_ID = "1526c36afb8b45ac8e684bb8729215b6"
+    const REDIRECT_URI = "http://localhost:3000/mood"
     const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
     const SCOPES = "user-library-read"
 
