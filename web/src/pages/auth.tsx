@@ -1,22 +1,17 @@
-import { config } from 'dotenv'
-config()
+import { SignInButton } from "@clerk/clerk-react";
+import { useConvexAuth } from "convex/react";
 
 export default function Auth() {
-    const CLIENT_ID = "1526c36afb8b45ac8e684bb8729215b6"
-    const REDIRECT_URI = "http://localhost:3000/mood"
-    const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
-    const SCOPES = "user-library-read"
-
-    const handleConnectToSpotify = () => {
-        window.location.href = `${SPOTIFY_AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}&response_type=code`
-    }
-
+    const { isLoading, isAuthenticated } = useConvexAuth();
         return (
         <div className="flex min-h-screen flex-col items-center justify-between p-24">
             <div className="flex flex-col md:flex-row pt-2 md:space-x-2">
-                <button onClick={handleConnectToSpotify} className="btn btn-success">
-                    Connect to Spotify
+                <button className="btn btn-success">
+                    <SignInButton/>
                 </button>
+            </div>
+            <div>
+                {isAuthenticated ? "Logged in" : "Logged out or still loading"}
             </div>
         </div>
     )
