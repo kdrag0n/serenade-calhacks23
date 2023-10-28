@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import axios from 'axios'
+import { config } from 'dotenv'
+config()
 
 export default function Auth() {
     const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
-    const CLIENT_ID = "your_spotify_app_client_id"
-    const REDIRECT_URI = "your_app_redirect_uri"
+    const CLIENT_ID = "1526c36afb8b45ac8e684bb8729215b6"
+    const REDIRECT_URI = "http://localhost:3000/mood"
     const SCOPES = "user-library-read"
 
     const handleConnectToSpotify = () => {
@@ -21,7 +23,7 @@ export default function Auth() {
                 code: code,
                 redirect_uri: REDIRECT_URI,
                 client_id: CLIENT_ID,
-                client_secret: 'your_spotify_app_client_secret'
+                client_secret: process.env.SPOTIFY_CLIENT_SECRET
             }).then((response: any) => {
                 const accessToken = response.data.access_token
                 axios.get('https://api.spotify.com/v1/me/tracks', {
