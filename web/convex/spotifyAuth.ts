@@ -1,16 +1,17 @@
 import { httpAction } from '../convex/_generated/server.js';
 import axios from 'axios';
 
-export const spotifyAuth = httpAction({
-    handler: async (ctx: any, req: any) => {
+export const spotifyAuth = httpAction(async (ctx: any, req: any): Promise<Response> => {
+
+        // Extract the authorization code from the request
         const code = req.query.code;
 
-        const params = new URLSearchParams();
+         const params = new URLSearchParams();
         params.append('grant_type', 'authorization_code');
         params.append('code', code);
-        params.append('redirect_uri', 'YOUR_REDIRECT_URI');
-        params.append('client_id', 'YOUR_CLIENT_ID');
-        params.append('client_secret', 'YOUR_CLIENT_SECRET');
+        params.append('redirect_uri', 'http://localhost:3000/mood');
+        params.append('client_id', '1526c36afb8b45ac8e684bb8729215b6')
+
 
         const response = await axios.post('https://accounts.spotify.com/api/token', params, {
             headers: {
@@ -19,6 +20,5 @@ export const spotifyAuth = httpAction({
         });
 
         const accessToken = response.data.access_token;
-
-    },
+        return new Response(JSON.stringify({ accessToken }));
 });
