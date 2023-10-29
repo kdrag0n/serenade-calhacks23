@@ -127,7 +127,7 @@ export default async function handler(
       prompt: musicGenPrompt,
       input_audio: `https://pub-b4043111f54e4dda94d846bf94227d0e.r2.dev/${audioKey}`,
       continuation: false, // true for longer
-      duration: 15, // TODO increase for prod
+      duration: 3, // TODO increase for prod
       seed: 982348912,
       // network is slow
       format: 'mp3',
