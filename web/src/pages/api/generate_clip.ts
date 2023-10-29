@@ -5,12 +5,24 @@ import { runProcess } from '@/util_server';
 import Replicate from 'replicate';
 import { rm } from 'fs/promises';
 import { generateUploadUrl } from '../../../convex/messages';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { createReadStream } from 'fs';
 
 const contextLen = 10 // sec
 
 const replicate = new Replicate({
   auth: 'r8_NZ4YhCM33FkeBJOrWN10Ui7N7C0yGgz1ZUR2r'
 })
+
+const S3 = new S3Client({
+  region: "auto",
+  endpoint: `https://46b92b876b97ec1d51081cf9af4132b9.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: 'b905b25052e267de95149770c4793110',
+    secretAccessKey: 'bbc15ec4309906cbaf16917cb55ded6d7b4f25fe6bb833f65976bca851f17a04',
+  },
+});
+
 
 async function getTopSong(userId: string) {
   // Initialize Clerk
@@ -93,14 +105,21 @@ export default async function handler(
   console.log('ffmpeg:', ffmpegOut)
 
   // upload audio
-  let postUrl = await generateUploadUrl()
+  console.log('uploading', userId)
+  let resp = await S3.send(new PutObjectCommand({
+    Bucket: 'serenade-calhacks23',
+    Key: `audio__${userId}.m4a`,
+    Body: createReadStream(finalTrimmed),
+  }))
+  console.log('upload resp', resp)
 
   // 4. replicate
+  console.log('replicating')
   let replicateOut = await replicate.run('meta/musicgen:7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906', {
     input: {
       model_version: 'melody',
       prompt: musicGenPrompt,
-      input_audio: finalTrimmed, // TODO upload?
+      input_audio: `https://pub-b4043111f54e4dda94d846bf94227d0e.r2.dev/audio__${userId}.m4a`,
       continuation: false, // true for longer
       duration: 3, // TODO increase for prod
       seed: 982348912,
@@ -110,7 +129,7 @@ export default async function handler(
   }) as {
     output: string
   }
-  console.log('got', replicateOut)
+  console.log('replicate done, got', replicateOut)
 
   // delete temp
   await rm(tmpDir, { recursive: true, force: true })
