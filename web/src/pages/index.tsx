@@ -13,16 +13,6 @@ import { AudioRecorder } from 'react-audio-voice-recorder';
 
 const inter = Inter({ subsets: ['latin'] });
 
-const addAudioElement = async (blob: any) => {
-  const url = URL.createObjectURL(blob);
-  const audio = document.createElement("audio");
-  audio.src = url;
-  audio.controls = true;
-  const output = await fetch(`/api/getHume?blob=${audio.src}`)
-  const data = await output.json();
-  console.log(data);
-}
-
 function Mood({ spotData }: {
   spotData: string[] | null
 }) {
@@ -31,7 +21,19 @@ function Mood({ spotData }: {
   let { userId } = useAuth()
   let [mood, setMood] = useState<string|null>(null)
   let [generating, setGenerating] = useState(false)
+  let [audioAttached, setAudioAttached] = useState(false)
 
+  const addAudioElement = async (blob: any) => {
+    setAudioAttached(true)
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    const output = await fetch(`/api/getHume?blob=${audio.src}`)
+    const data = await output.json();
+    console.log(data);
+  }
+  
   async function generateClip() {
     // request
     setGenerating(true)
@@ -65,14 +67,13 @@ function Mood({ spotData }: {
       <h1 className=' text-md'>{spotData[1]}</h1>
     </div>}
     {!spotData && <Loader2 className="w-10 h-10 animate-spin" />}
-
-    <h1 className=' text-4xl font-medium'>Let's record a quick audio sample.</h1>
     <div className='flex flex-col items-center justify-center flex-wrap'>
       <h1 className=' text-xl'>Recite this in a natural tone:</h1>
       <h1 className=' text-xl'>The quick brown fox jumps over the lazy dog.</h1>
       <h1 className=' text-xl'>The early bird catches the worm.</h1>
       <h1 className=' text-xl'>Good things come to those who wait.</h1>
-      <AudioRecorder 
+    </div>
+    <AudioRecorder 
         onRecordingComplete={addAudioElement}
         audioTrackConstraints={{
           noiseSuppression: true,
@@ -81,8 +82,7 @@ function Mood({ spotData }: {
         downloadOnSavePress={false}
         downloadFileExtension="mp3"
       />
-    </div>
-    <button className='btn btn-success' onClick={generateClip} disabled={mood === null}>Cheer me up</button>
+    <button className='btn btn-success' onClick={generateClip} disabled={mood === null || audioAttached == false}>Cheer me up</button>
   </div>}
   </>
 }
