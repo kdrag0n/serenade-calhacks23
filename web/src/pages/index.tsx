@@ -38,22 +38,14 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetch('https://api.openai.com/v1/engines/davinci/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_KEY}`
-        // print it out to check if it's correct
-      },
-      body: JSON.stringify({
-    prompt: 'Translate the following English text to French: "Hello, world!"',
-    max_tokens: 60,
-    engine: 'text-davinci-003',
-    temperature: 0.5,
-  })
-      })
+      fetch('/api/openai?promptText=This is a test')
       .then(response => response.json())
-      .then(data => setChatCompletion(data.choices[0].message.content)) // Set the chat completion
+      .then(data => {
+        console.log(data.choices[0].message.content);
+        if (data && data.choices && data.choices[0] && data.choices[0].message) {
+          setChatCompletion(data.choices[0].message.content);
+        }
+      })
       .catch((error) => {
         console.error('Error:', error);
       });
