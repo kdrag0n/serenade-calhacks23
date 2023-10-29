@@ -56,6 +56,11 @@ export default async function handler(
       res.status(405).end(`Method Not Allowed`);
   }
 
+  // res.status(200).json({ 
+  //   audioUrl: 'https://replicate.delivery/pbxt/F5wXHeQalswlGSCt9g68bz8OpqZeCqvNwwX9f2RkSTPUL6ljA/out.wav',
+  // })
+  // return
+
   const userId = req.query.userId as string;
   const emoji = req.query.emoji as string;
 
