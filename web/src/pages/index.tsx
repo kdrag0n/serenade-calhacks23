@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google';
-import { use, useEffect, useRef, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { useConvexAuth } from "convex/react";
 import { SignOutButton } from '@clerk/clerk-react';
@@ -11,13 +11,6 @@ import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
-function GeneratingOverlay() {
-  return <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 flex flex-col items-center justify-center">
-    <Loader2 className="w-24 h-24 animate-spin" />
-    <h1 className="text-2xl text-white">Happy times soon…</h1>
-  </div>
-}
-
 function Mood({ spotData }: {
   spotData: string[] | null
 }) {
@@ -26,9 +19,6 @@ function Mood({ spotData }: {
   let { userId } = useAuth()
   let [mood, setMood] = useState<string|null>(null)
   let [generating, setGenerating] = useState(false)
-  let [audioUrl, setAudioUrl] = useState<string|null>(null)
-  let audioRef = useRef<HTMLAudioElement>(null)
-  let done = !!audioUrl
 
   async function generateClip() {
     // request
@@ -37,26 +27,23 @@ function Mood({ spotData }: {
       method: 'POST',
     })
     setGenerating(false)
-    console.log('api', output)
 
     // play from blob
-    setAudioUrl(output.audioUrl)
+    const audio = new Audio(output.audioUrl);
+    audio.play();
   }
 
-  return done ? <>
-    <div className="flex min-h-screen flex-col items-center gap-12">
-      <h1 className=' text-6xl font-medium'>Relax and enjoy 🎶</h1>
-
-      {audioUrl && <audio ref={audioRef} src={audioUrl} controls autoPlay loop />}
-  </div>
-  </> : <div className="flex min-h-screen flex-col items-center gap-10">
+  return <>
+    {generating ? <>
+      <Loader2 className="w-24 h-24 animate-spin" />
+    </> : <div className="flex min-h-screen flex-col items-center gap-12 p-24">
     <h1 className=' text-8xl font-extrabold'>Hi.</h1>
     <h1 className=' text-6xl font-medium'>How are you feeling?</h1>
     <div className='flex flex-row items-center justify-center flex-wrap'>
         {emojiBank.split(',').map((emoji, i) => (
-          <button key={i} onClick={() => setMood(emoji)} className={clsx('text-6xl hover:z-20 hover:scale-150 transition-all duration-300 ease-out drop-shadow-lg peer active:scale-125 ', mood === emoji && 'scale-150 z-10', (mood !== emoji && mood !== null) && 'opacity-50 hover:opacity-80')} >
-            {emoji}
-          </button>
+            <button key={i} onClick={() => setMood(emoji)} className={clsx('text-6xl hover:z-20 hover:scale-150 transition-all duration-300 ease-out drop-shadow-lg peer active:scale-125 ', mood === emoji && 'scale-150 z-10', (mood !== emoji && mood !== null) && 'opacity-50 hover:opacity-80')} >
+                {emoji}
+            </button>
         ))}
     </div> 
 
@@ -67,12 +54,16 @@ function Mood({ spotData }: {
     </div>}
     {!spotData && <Loader2 className="w-10 h-10 animate-spin" />}
 
+    <h1 className=' text-4xl font-medium'>Let's record a quick audio sample.</h1>
+    <div className='flex flex-col items-center justify-center flex-wrap'>
+      <h1 className=' text-xl'>Recite this in a natural tone:</h1>
+      <h1 className=' text-xl'>The quick brown fox jumps over the lazy dog.</h1>
+      <h1 className=' text-xl'>The early bird catches the worm.</h1>
+      <h1 className=' text-xl'>Good things come to those who wait.</h1>
+    </div>
     <button className='btn btn-success' onClick={generateClip} disabled={mood === null}>Cheer me up</button>
-
-    {audioUrl && <audio ref={audioRef} src={audioUrl} controls autoPlay loop />}
-
-    {generating && <GeneratingOverlay />}
-  </div>
+  </div>}
+  </>
 }
 
 export default function Home() {
