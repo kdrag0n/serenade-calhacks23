@@ -4,6 +4,7 @@ import { fetchJson } from '@/util';
 import { runProcess } from '@/util_server';
 import Replicate from 'replicate';
 import { rm } from 'fs/promises';
+import { generateUploadUrl } from '../../../convex/messages';
 
 const contextLen = 10 // sec
 
@@ -65,7 +66,7 @@ export default async function handler(
       max_tokens: 100,
       model: 'gpt-3.5-turbo',
       messages: [
-        {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}`},
+        {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}. ONLY return the prompt without ANY explanation or .`},
       ],
     })
   })
@@ -92,7 +93,7 @@ export default async function handler(
   console.log('ffmpeg:', ffmpegOut)
 
   // upload audio
-  let postUrl = await ctx.uploadFile(finalTrimmed)
+  let postUrl = await generateUploadUrl()
 
   // 4. replicate
   let replicateOut = await replicate.run('meta/musicgen:7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906', {
