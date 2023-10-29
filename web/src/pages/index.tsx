@@ -21,17 +21,17 @@ function Mood({ spotData }: {
   let { userId } = useAuth()
   let [mood, setMood] = useState<string|null>(null)
   let [generating, setGenerating] = useState(false)
-  let [audioAttached, setAudioAttached] = useState(false)
-
+  let [jobId, setJobId] = useState<string|null>(null)
   const addAudioElement = async (blob: any) => {
-    setAudioAttached(true)
     const url = URL.createObjectURL(blob);
     const audio = document.createElement("audio");
     audio.src = url;
     audio.controls = true;
     const output = await fetch(`/api/getHume?blob=${audio.src}`)
-    const data = await output.json();
-    console.log(data);
+    const outputData = await output.json();
+    const prediction = await fetch(`/api/getJob?jobId=${outputData.job_id}`)
+    const predictionData = await prediction.json();
+    setJobId(JSON.stringify(predictionData));
   }
   
   async function generateClip() {
@@ -85,7 +85,7 @@ function Mood({ spotData }: {
         downloadOnSavePress={false}
         downloadFileExtension="mp3"
       />
-    <button className='btn btn-success' onClick={generateClip} disabled={mood === null || audioAttached == false}>Cheer me up</button>
+    <button className='btn btn-success' onClick={generateClip} disabled={mood === null || jobId == null}>Cheer me up</button>
   </div>}
   </>
 }
