@@ -38,18 +38,19 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+      fetch('https://api.openai.com/v1/engines/davinci/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_KEY}`
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_KEY}`
+        // print it out to check if it's correct
       },
       body: JSON.stringify({
-        prompt: 'Translate the following English text to French: "{text}"',
-        max_tokens: 60,
-        engine: 'text-davinci-003',
-        temperature: 0.5,
-      })
+    prompt: 'Translate the following English text to French: "Hello, world!"',
+    max_tokens: 60,
+    engine: 'text-davinci-003',
+    temperature: 0.5,
+  })
       })
       .then(response => response.json())
       .then(data => setChatCompletion(data.choices[0].message.content)) // Set the chat completion

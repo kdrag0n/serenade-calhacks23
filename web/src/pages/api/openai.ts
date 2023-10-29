@@ -2,7 +2,7 @@ fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${process.env.OPENAI_KEY}`
+  'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
   },
   body: JSON.stringify({
     prompt: 'Translate the following English text to French: "{text}"',
