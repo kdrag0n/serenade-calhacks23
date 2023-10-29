@@ -7,6 +7,7 @@ import { useAuth } from '@clerk/nextjs'
 import { Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 import { fetchJson } from '@/util';
+import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -91,6 +92,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen bg-gradient-to-b from-[#11998e] to-[#237A57] flex-col items-center space-y-10 p-24">
+      <Image src="/SerenadeLogo.png" alt="logo" width={48} height={48} className="fixed top-0 left-0 m-4" />
       {isAuthenticated ? <>
         <Mood spotData={spotData} />
       </> : <Loader2 className="w-10 h-10 animate-spin" />}
