@@ -12,7 +12,7 @@ import Image from 'next/image';
 const inter = Inter({ subsets: ['latin'] });
 
 function GeneratingOverlay() {
-  return <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 flex flex-col items-center justify-center">
+  return <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 flex flex-col items-center justify-center z-30">
     <Loader2 className="w-24 h-24 animate-spin" />
     <h1 className="text-2xl text-white">Happy times soon…</h1>
   </div>
