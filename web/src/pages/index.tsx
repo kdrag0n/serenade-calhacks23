@@ -11,54 +11,30 @@ export default function Home() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const { userId, isLoaded } = useAuth();
   const router = useRouter();
-  const [spotData, setSpotData] = useState<string[] | null>(null);
-  const [youtubeLink, setYoutubeLink] = useState<string | null>(null);
+  const [data, setSpotData] = useState<string | null>(null);
   const [chatCompletion, setChatCompletion] = useState(''); // Declare the state variable here
 
-  const fetchSpotifyTopTrack = async () => {
+  const fetchDataFromExternalResource = async () => {
     try {
       const response = await fetch(`/api/getTracks?userId=${userId}`);
       const data = await response.json();
-      const title = data.items[0].name;
-      const artist = data.items[0].artists[0].name;
-      const album = data.items[0].album.name;
-      const link = data.items[0].external_urls.spotify;
-      return [`Song titled ${title} on the album ${album} by ${artist}`, `${link}`]; 
+      return data; 
     } catch (error) {
       console.error("Error fetching data from external resource:", error);
       return null;
     }
   };
 
-  const convertSpotifyToYoutube = async () => {
-    try {
-      const response = await fetch(`/api/linkApi?spotifyUrl=${spotData![1]}`);
-      const data = await response.json();
-      return data.linksByPlatform.youtube.url;
-    }
-    catch (error) {
-      console.error("Error fetching data from external resource:", error);
-      return null;
-    }
-  }
-
   useEffect(() => {
     if (isAuthenticated === false && isLoading === false) {
       router.push('/auth');
     } if (isAuthenticated === true && userId) {
-      fetchSpotifyTopTrack().then((sData) => {
-        setSpotData(sData);
+      fetchDataFromExternalResource().then((data) => {
+        setSpotData(JSON.stringify(data));
       })
     }
   }, [isAuthenticated, isLoading, isLoaded, router]);
 
-  useEffect(() => {
-    if (spotData !== null) {
-      convertSpotifyToYoutube().then((yData) => {
-        setYoutubeLink(yData);
-      })
-    }
-  }, [spotData]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -82,21 +58,10 @@ export default function Home() {
         {isAuthenticated ? (
           <>
           <div>
-            {spotData !== null ? (
-              <ul>
-                {spotData.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Loading...</p>
-            )}        
-          </div>
-          <div>
-            {youtubeLink}
+            {data}
           </div>
           </>
-        ) : "Loading..."}
+        ) : "Logged out or still loading"}
       </div>
       <div>
         {isAuthenticated ? (
@@ -111,7 +76,7 @@ export default function Home() {
         <SignOutButton />
       </button>
       <div>
-        {chatCompletion} // Display the chat completion here
+        {chatCompletion}
       </div>
     </main>
   )
