@@ -135,7 +135,7 @@ export default async function handler(
       duration: 3, // TODO increase for prod
       seed: 982348912,
       // network is slow
-      format: 'mp3',
+      output_format: 'mp3',
     },
   }) as {
     output: string
