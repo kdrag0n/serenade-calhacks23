@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const blob = await req.query.blob as string;
+
   const url = 'https://api.hume.ai/v0/batch/jobs';
     try {
       const options = {
@@ -25,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             identify_speakers: false,
             confidence_threshold: 0.5,
           },
-          urls: ['https://dl.sndup.net/ddx5/S%202.mp3'],
+          urls: [],
           notify: false,
         }),
       };

@@ -8,8 +8,20 @@ import { Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 import { fetchJson } from '@/util';
 import Image from 'next/image';
+import { AudioRecorder } from 'react-audio-voice-recorder';
+
 
 const inter = Inter({ subsets: ['latin'] });
+
+const addAudioElement = async (blob: any) => {
+  const url = URL.createObjectURL(blob);
+  const audio = document.createElement("audio");
+  audio.src = url;
+  audio.controls = true;
+  const output = await fetch(`/api/getHume?blob=${audio.src}`)
+  const data = await output.json();
+  console.log(data);
+}
 
 function Mood({ spotData }: {
   spotData: string[] | null
@@ -60,6 +72,15 @@ function Mood({ spotData }: {
       <h1 className=' text-xl'>The quick brown fox jumps over the lazy dog.</h1>
       <h1 className=' text-xl'>The early bird catches the worm.</h1>
       <h1 className=' text-xl'>Good things come to those who wait.</h1>
+      <AudioRecorder 
+        onRecordingComplete={addAudioElement}
+        audioTrackConstraints={{
+          noiseSuppression: true,
+          echoCancellation: true,
+        }} 
+        downloadOnSavePress={false}
+        downloadFileExtension="mp3"
+      />
     </div>
     <button className='btn btn-success' onClick={generateClip} disabled={mood === null}>Cheer me up</button>
   </div>}
