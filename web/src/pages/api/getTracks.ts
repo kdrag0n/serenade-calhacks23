@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Initialize Clerk
   const clerk = Clerk({ secretKey: 'sk_test_tuvlhnoT55OF5X28tq0sGR1G3PRLCkJU3eInTjivtP' });
-  const userId = await req.query.userId as string;
+  const userId = await req.query.id as string;
 
   try {
     // Get the user's OAuth token

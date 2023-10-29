@@ -7,7 +7,7 @@ function sleep(ms: number) {
   }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const jobId = await req.query.jobId as string;
+  const { id } = await req.query;
 
   const options = {
     method: 'GET',
@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let fetchedHume = false;
     let completion = null;
     while(fetchedHume == false) {
-        completion = await fetch(`https://api.hume.ai/v0/batch/jobs/${jobId}`, options)
+        completion = await fetch(`https://api.hume.ai/v0/batch/jobs/${id}`, options)
         const data = await completion.json();
         if (data.state.status == 'COMPLETED') {
             fetchedHume = true;
@@ -31,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 
-    const predictions = await fetch(`https://api.hume.ai/v0/batch/jobs/${jobId}/predictions`, options)
+    const predictions = await fetch(`https://api.hume.ai/v0/batch/jobs/${id}/predictions`, options)
     
     if (predictions.status !== 200) {
       throw new Error('Failed to fetch data');
