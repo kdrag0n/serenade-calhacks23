@@ -68,6 +68,9 @@ function Mood({ spotData }: {
     </div>}
     {!spotData && <Loader2 className="w-10 h-10 animate-spin" />}
     <div className='flex flex-col items-center justify-center flex-wrap'>
+      <h1 className=' text-4xl font-medium'>Let's record a quick audio sample.</h1>
+    </div>
+    <div className='flex flex-col items-center justify-center flex-wrap'>
       <h1 className=' text-xl'>Recite this in a natural tone:</h1>
       <h1 className=' text-xl'>The quick brown fox jumps over the lazy dog.</h1>
       <h1 className=' text-xl'>The early bird catches the worm.</h1>
