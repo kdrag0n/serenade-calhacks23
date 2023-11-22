@@ -46,6 +46,11 @@ export default async function handler(
       res.status(405).end(`Method Not Allowed`);
   }
 
+  // res.status(200).json({ 
+  //   audioUrl: 'https://replicate.delivery/pbxt/F5wXHeQalswlGSCt9g68bz8OpqZeCqvNwwX9f2RkSTPUL6ljA/out.wav',
+  // })
+  // return
+
   const userId = req.query.userId as string;
   const emoji = req.query.emoji as string;
 
@@ -68,7 +73,16 @@ export default async function handler(
       max_tokens: 100,
       model: 'gpt-3.5-turbo',
       messages: [
+<<<<<<< HEAD
         {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}`},
+=======
+        {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}. ONLY return the prompt without ANY explanation or lead-up. Keywords only, not full sentences.
+
+Example 1: Edo25 major g melodies that sound triumphant and cinematic. Leading up to a crescendo that resolves in a 9th harmonic
+Example 2: A grand orchestral arrangement with thunderous percussion, epic brass fanfares, and soaring strings, creating a cinematic atmosphere fit for a heroic battle.
+
+Use whatever instruments you want for medically-proven therapeutic purposes.`},
+>>>>>>> 8a71b74007bfeafd86a96931e1245c8d2f17000e
       ],
     })
   })
@@ -107,7 +121,7 @@ export default async function handler(
       duration: 3, // TODO increase for prod
       seed: 982348912,
       // network is slow
-      format: 'mp3',
+      output_format: 'mp3',
     },
   }) as {
     output: string
