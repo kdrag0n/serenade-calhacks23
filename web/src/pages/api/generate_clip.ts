@@ -4,25 +4,15 @@ import { fetchJson } from '@/util';
 import { runProcess } from '@/util_server';
 import Replicate from 'replicate';
 import { rm } from 'fs/promises';
-import { generateUploadUrl } from '../../../convex/messages';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { createReadStream } from 'fs';
+import { httpAction } from '../../../convex/_generated/server.js';
+import { mutation } from '../../../convex/_generated/server.js';
+import { useMutation } from "convex/react";
 
 const contextLen = 10 // sec
 
 const replicate = new Replicate({
   auth: 'r8_NZ4YhCM33FkeBJOrWN10Ui7N7C0yGgz1ZUR2r'
 })
-
-const S3 = new S3Client({
-  region: "auto",
-  endpoint: `https://46b92b876b97ec1d51081cf9af4132b9.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: 'b905b25052e267de95149770c4793110',
-    secretAccessKey: 'bbc15ec4309906cbaf16917cb55ded6d7b4f25fe6bb833f65976bca851f17a04',
-  },
-});
-
 
 async function getTopSong(userId: string) {
   // Initialize Clerk
@@ -67,11 +57,6 @@ export default async function handler(
   // broken for some songs (missing yt link)
   //const ytUrl = await convertSpotifyToYtUrl(songUrl);
 
-  // hash for caching
-  let songHash = songUrl.split('/').pop() as string
-  console.log('hash', songHash)
-  let audioKey = `audio__${userId}__${songHash}__1.m4a`
-
   // 1. gpt
   let completion = await fetchJson('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -83,7 +68,7 @@ export default async function handler(
       max_tokens: 100,
       model: 'gpt-3.5-turbo',
       messages: [
-        {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}. ONLY return the prompt without ANY explanation or lead-up. Keywords only, not full sentences.`},
+        {'role': 'user', 'content': `I’m feeling like ${emoji}. What’s a good prompt for MusicGen, an AI music generation model, to cheer me up through therapeutic music? Please base it on my favorite song: ${songTitle}`},
       ],
     })
   })
@@ -110,22 +95,14 @@ export default async function handler(
   console.log('ffmpeg:', ffmpegOut)
 
   // upload audio
-  console.log('uploading', userId)
-  let resp = await S3.send(new PutObjectCommand({
-    Bucket: 'serenade-calhacks23',
-    Key: audioKey,
-    Body: createReadStream(finalTrimmed),
-  }))
-  console.log('upload resp', resp)
+  let postUrl = await ctx.uploadFile(finalTrimmed)
 
   // 4. replicate
-  console.log('replicating')
-  let timeBefore = performance.now()
   let replicateOut = await replicate.run('meta/musicgen:7a76a8258b23fae65c5a22debb8841d1d7e816b75c2f24218cd2bd8573787906', {
     input: {
       model_version: 'melody',
       prompt: musicGenPrompt,
-      input_audio: `https://pub-b4043111f54e4dda94d846bf94227d0e.r2.dev/${audioKey}`,
+      input_audio: finalTrimmed, // TODO upload?
       continuation: false, // true for longer
       duration: 3, // TODO increase for prod
       seed: 982348912,
@@ -135,15 +112,13 @@ export default async function handler(
   }) as {
     output: string
   }
-  let timeAfter = performance.now()
-  console.log('replicate time', (timeAfter - timeBefore) / 1000, 's')
-  console.log('replicate done, got', replicateOut)
+  console.log('got', replicateOut)
 
   // delete temp
   await rm(tmpDir, { recursive: true, force: true })
 
   // return
   res.status(200).json({ 
-    audioUrl: replicateOut,
+    audioUrl: replicateOut.output,
   })
 }
